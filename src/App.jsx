@@ -255,7 +255,21 @@ export default function App() {
       });
       const parsed = await res.json();
       if (parsed.error) throw new Error(parsed.error);
-      setAnalisisActual(parsed);
+      const safe = {
+        score_validacion: parsed.score_validacion ?? 5,
+        score_potencial: parsed.score_potencial ?? 5,
+        score_ejecutable: parsed.score_ejecutable ?? 5,
+        score_total: parsed.score_total ?? 5,
+        nivel: parsed.nivel ?? "Viabilidad media",
+        resumen: parsed.resumen ?? "Análisis completado.",
+        pros: Array.isArray(parsed.pros) ? parsed.pros : ["Ver análisis completo"],
+        contras: Array.isArray(parsed.contras) ? parsed.contras : ["Requiere validación"],
+        tiempo_lanzamiento: parsed.tiempo_lanzamiento ?? "A definir",
+        precio_estimado: parsed.precio_estimado ?? "A definir",
+        clientes_meta: parsed.clientes_meta ?? "A definir",
+        primer_paso: parsed.primer_paso ?? "Validar la idea con potenciales clientes.",
+      };
+      setAnalisisActual(safe);
       setTextoActual(texto);
       setScreen("resultado");
     } catch {

@@ -42,7 +42,7 @@ Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional, sin markdo
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-haiku-4-5-20251001",
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: `Analiza esta idea de negocio: "${idea}"` }],
@@ -50,8 +50,20 @@ Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional, sin markdo
     });
 
     const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Anthropic error:", JSON.stringify(data));
+      return res.status(500).json({ error: data.error?.message || "API error" });
+    }
+
     const raw = data.content?.[0]?.text || "{}";
-    const parsed = JSON.parse(raw.replace(/```json|```/g, "").trim());
+    let parsed;
+    try {
+      parsed = JSON.parse(raw.replace(/```json|```/g, "").trim());
+    } catch(e) {
+      console.error("Parse error:", e.message, "Raw:", raw);
+      return res.status(500).json({ error: "No se pudo leer la respuesta" });
+    }
     res.status(200).json(parsed);
   } catch (err) {
     console.error(err);

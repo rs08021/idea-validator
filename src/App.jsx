@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-import { supabase } from "./supabase";
+import { createClient } from "@supabase/supabase-js";
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_KEY);
 
 const scoreColor = (s) => {
   if (s >= 8) return { ring: "#10b981", text: "#10b981", bg: "#052e16" };
